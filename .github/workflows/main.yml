@@ -1,22 +1,40 @@
-Verify Human Identity #1
-All jobs
-Run details
-Manually triggered now
-@Kucingg00Kucingg00
-⁠
- 8733854
-develop
-Status
-Failure
-Total duration
-17s
-Artifacts
-–
+name: Verify Human Identity
 
+on:
+  workflow_dispatch:
+    inputs:
+      agent_name:
+        description: 'Kucingg00'
+        required: true
+        default: 'Kucingg00'
+      agent_description:
+        description: 'Kucingg00'
+        required: true
+        default: 'Kucingg00 AI Agent'
 
-Annotations
-1 error and 1 warning
-verify
-Process completed with exit code 1.
-verify
-Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v3, actions/setup-node@v3. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Step 1 - Install ClawHub skill
+        run: npx clawhub@latest install verified-agent-identity
+
+      - name: Install script dependencies
+        run: |
+          cd scripts
+          npm install
+
+      - name: Step 2 - Create new Ethereum Identity
+        run: node scripts/createNewEthereumIdentity.js
+
+      - name: Step 3 - Link Human to Agent
+        run: node scripts/manualLinkHumanToAgent.js --challenge '{"name":"Kucingg00","description":"Kucingg00 AI Agent"}'
